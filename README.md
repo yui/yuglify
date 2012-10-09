@@ -1,7 +1,7 @@
 yUglify
 =======
 
-`yuglify` is a wrapper around [UglifyJS](https://github.com/mishoo/UglifyJS) and [https://github.com/jbleuzen/node-cssmin](cssmin)
+`yuglify` is a wrapper around [UglifyJS](https://github.com/mishoo/UglifyJS) and [cssmin](https://github.com/jbleuzen/node-cssmin)
 with the default YUI configurations on each of them.
 
 CLI Usage
@@ -27,9 +27,11 @@ Required
 var yuglify = require('yuglify');
 
 yuglify.jsmin('<string of source', function(err, smashed) {
+    fs.writeFile('/path/to/file', smashed, 'utf8', function() {});
 });
 
 yuglify.cssmin('<string of source', function(err, smashed) {
+    fs.writeFile('/path/to/file', smashed, 'utf8', function() {});
 });
 
 ```
@@ -37,8 +39,7 @@ yuglify.cssmin('<string of source', function(err, smashed) {
 Purpose
 -------
 
-This module is primarily designed to be used inside the 
-YUI Build tool, [shifter](http://yui.github.com/shifter/).
+This module is primarily designed to be used inside [shifter](http://yui.github.com/shifter/).
 
 Why not use the default Uglify?
 -------------------------------
@@ -58,7 +59,7 @@ The last thing this module does is provide the default config that we think
 is the most compatible with the way that YUI Compressor used to minify our
 files.
 
-```
+```javascript
 {
     mangle: true,
     squeeze: true,
