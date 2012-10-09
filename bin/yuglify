@@ -1,0 +1,78 @@
+#!/usr/bin/env node
+
+var nopt = require('nopt'),
+    path = require('path'),
+    fs = require('fs'),
+    exists = fs.existsSync || path.existsSync,
+    pack = require('../package.json'),
+    jsmin = require('../').jsmin,
+    cssmin = require('../').cssmin,
+    known = {
+        help: Boolean,
+        version: Boolean
+    },
+    shorts = {
+        "h": ['--help'],
+        "v": ['--version']
+    },
+    parsed = nopt(known, shorts);
+
+parsed.type = parsed.type || 'js'; //Default to JS files
+
+if (parsed.version) {
+    console.log(pack.version);
+    process.exit(0);
+}
+
+if (parsed.help) {
+    var help = [
+        'yuglify@' + pack.version,
+        '',
+        '           yuglify ./foo.js #Auto saves to ./foo-min.js',
+        '           yuglify ./foo/foo.js ./bar/bar.js #Auto saves to ./foo/foo-min.js and ./bar/bar-min.js',
+        '           yuglify ./foo/foo.css ./bar/bar.js #Auto saves to ./foo/foo-min.css and ./bar/bar-min.js',
+        '',
+        '   --help/-h       show this',
+        '   --version/-v    show version',
+        '   <files to compress>',
+    ];
+    console.log(help.join('\n'));
+    process.exit(0);
+}
+
+if (!parsed.argv.remain.length) {
+    console.log('no files');
+    process.exit(1);
+}
+
+console.log('compressing..');
+console.log(parsed.argv.remain.join(', '));
+
+console.log(parsed);
+
+var out = parsed.out,
+    files = parsed.argv.remain;
+
+//Uglify is blocking, so we will do this in sync..
+files.forEach(function(file) {
+    file = path.resolve(file);
+    if (exists(file)) {
+        var data = fs.readFileSync(file, 'utf8'),
+            ext = path.extname(file),
+            out = path.join(path.dirname(file), path.basename(file).replace(ext, '') + '-min' + ext),
+            compfn = (ext === '.css' ? cssmin : jsmin);
+
+        compfn(data, function(err, smashed) {
+            if (err) {
+                throw(err);
+                process.exit(1);
+            }
+            fs.writeFileSync(out, smashed, 'utf8');
+            console.log('compressed file', out);
+        });
+    } else {
+        console.log('Failed to find', file);
+        process.exit(1);
+    }
+});
+
