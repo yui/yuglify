@@ -29,7 +29,8 @@ if (parsed.version) {
     process.exit(0);
 }
 
-if (parsed.help) {
+
+if (parsed.help || !parsed.argv.remain.length) {
     var help = [
         'yuglify@' + pack.version,
         '',
@@ -43,11 +44,6 @@ if (parsed.help) {
     ];
     console.log(help.join('\n'));
     process.exit(0);
-}
-
-if (!parsed.argv.remain.length) {
-    console.log('no files');
-    process.exit(1);
 }
 
 console.log('compressing..');
