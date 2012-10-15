@@ -4,6 +4,7 @@ yUglify
 `yuglify` is a wrapper around [UglifyJS](https://github.com/mishoo/UglifyJS) and [cssmin](https://github.com/jbleuzen/node-cssmin)
 with the default YUI configurations on each of them.
 
+
 Build Status
 ------------
 
