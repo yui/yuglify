@@ -13,12 +13,17 @@ var nopt = require('nopt'),
     jsmin = require('../').jsmin,
     cssmin = require('../').cssmin,
     known = {
+        type: ['css', 'js'],
+        output: path,
+        terminal: Boolean,
         help: Boolean,
         version: Boolean
     },
     shorts = {
-        "h": ['--help'],
-        "v": ['--version']
+        'o': ['--output'],
+        't': ['--type'],
+        'h': ['--help'],
+        'v': ['--version']
     },
     parsed = nopt(known, shorts);
 
@@ -30,7 +35,7 @@ if (parsed.version) {
 }
 
 
-if (parsed.help || !parsed.argv.remain.length) {
+if (parsed.help || (!parsed.argv.remain.length && !parsed.terminal)) {
     var help = [
         'yuglify@' + pack.version,
         '',
@@ -40,40 +45,66 @@ if (parsed.help || !parsed.argv.remain.length) {
         '',
         '   --help/-h       show this',
         '   --version/-v    show version',
+        '   --type js|css   what type of file to compress (used with stdin)',
+        '   --terminal      use stdin and stdout instead of files',
+        '   --output <file> use this file when using --terminal',
         '   <files to compress>',
     ];
     console.log(help.join('\n'));
     process.exit(0);
 }
 
-console.log('compressing..');
-console.log(parsed.argv.remain.join(', '));
+if (parsed.terminal) {
+    var stdin = process.openStdin(),
+        data = '';
 
-console.log(parsed);
-
-var out = parsed.out,
-    files = parsed.argv.remain;
-
-//Uglify is blocking, so we will do this in sync..
-files.forEach(function(file) {
-    file = path.resolve(file);
-    if (exists(file)) {
-        var data = fs.readFileSync(file, 'utf8'),
-            ext = path.extname(file),
-            out = path.join(path.dirname(file), path.basename(file).replace(ext, '') + '-min' + ext),
-            compfn = (ext === '.css' ? cssmin : jsmin);
-
+    stdin.setEncoding("utf8");
+    stdin.on('data', function(buffer) {
+        data += buffer;
+    });
+    stdin.on('end', function() {
+        var compfn = (parsed.type === 'css' ? cssmin : jsmin);
         compfn(data, function(err, smashed) {
             if (err) {
                 throw(err);
                 process.exit(1);
             }
-            fs.writeFileSync(out, smashed, 'utf8');
-            console.log('compressed file', out);
+            if (parsed.output) {
+                fs.writeFileSync(parsed.output, smashed, 'utf8');
+            } else {
+                process.stdout.write(smashed);
+            }
         });
-    } else {
-        console.log('Failed to find', file);
-        process.exit(1);
-    }
-});
+    });
+} else {
+    console.log('compressing..');
+    console.log(parsed.argv.remain.join(', '));
 
+    console.log(parsed);
+
+    var out = parsed.out,
+        files = parsed.argv.remain;
+
+    //Uglify is blocking, so we will do this in sync..
+    files.forEach(function(file) {
+        file = path.resolve(file);
+        if (exists(file)) {
+            var data = fs.readFileSync(file, 'utf8'),
+                ext = path.extname(file),
+                out = path.join(path.dirname(file), path.basename(file).replace(ext, '') + '-min' + ext),
+                compfn = (ext === '.css' ? cssmin : jsmin);
+
+            compfn(data, function(err, smashed) {
+                if (err) {
+                    throw(err);
+                    process.exit(1);
+                }
+                fs.writeFileSync(out, smashed, 'utf8');
+                console.log('compressed file', out);
+            });
+        } else {
+            console.log('Failed to find', file);
+            process.exit(1);
+        }
+    });
+}
