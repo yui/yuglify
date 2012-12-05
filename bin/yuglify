@@ -80,8 +80,6 @@ if (parsed.terminal) {
     console.log('compressing..');
     console.log(parsed.argv.remain.join(', '));
 
-    console.log(parsed);
-
     var out = parsed.out,
         files = parsed.argv.remain;
 
