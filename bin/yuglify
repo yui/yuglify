@@ -48,7 +48,7 @@ if (parsed.help || (!parsed.argv.remain.length && !parsed.terminal)) {
         '   --type js|css   what type of file to compress (used with stdin)',
         '   --terminal      use stdin and stdout instead of files',
         '   --output <file> use this file when using --terminal',
-        '   <files to compress>',
+        '   <files to compress>'
     ];
     console.log(help.join('\n'));
     process.exit(0);
