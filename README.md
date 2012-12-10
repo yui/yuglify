@@ -71,7 +71,7 @@ files.
     mangle: true,
     squeeze: true,
     semicolon: false,
-    lift_vars: true,
+    lift_vars: false,
     mangle_toplevel: true,
     no_mangle_functions: true,
     max_line_length: 6000
