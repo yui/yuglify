@@ -1,35 +1,37 @@
 {
-    "name": "yuglify",
-    "description": "cli wrapper for uglify and cssmin used by YUI",
-    "version": "0.1.2",
-    "dependencies": {
-        "uglify-js": "~1.3.3",
-        "ycssmin": "~1.0.0",
-        "nopt": "*"
-    },
-    "devDependencies": {
-        "yui-lint": "~0.1.1",
-        "jshint": "~0.9.0",
-        "vows": "*" 
-    },
-    "main": "./lib/index.js",
-    "bin": {
-        "yuglify": "./bin/yuglify"
-    },
-    "scripts": {
-        "pretest": "jshint --config ./node_modules/yui-lint/jshint.json ./lib/*.js ./bin/yuglify",
-        "test": "vows --spec ./tests/*.js"
-    },
-    "preferGlobal": "true",
-    "bugs": { "url" : "http://github.com/yui/yuglify/issues" },
-    "licenses":[
-        {
-            "type" : "BSD",
-            "url" : "https://github.com/yui/yuglify/blob/master/LICENSE"
-        }
-    ],
-    "repository": {
-        "type":"git",
-        "url":"http://github.com/yui/yuglify.git"
+  "name": "yuglify",
+  "description": "cli wrapper for uglify and cssmin used by YUI",
+  "version": "0.1.2",
+  "dependencies": {
+    "uglify-js": "~1.3.4",
+    "ycssmin": "~1.0.1",
+    "nopt": "~2.1.1"
+  },
+  "devDependencies": {
+    "yui-lint": "~0.1.1",
+    "jshint": "~0.9.0",
+    "vows": "*"
+  },
+  "main": "./lib/index.js",
+  "bin": {
+    "yuglify": "./bin/yuglify"
+  },
+  "scripts": {
+    "pretest": "jshint --config ./node_modules/yui-lint/jshint.json ./lib/*.js ./bin/yuglify",
+    "test": "vows --spec ./tests/*.js"
+  },
+  "preferGlobal": "true",
+  "bugs": {
+    "url": "http://github.com/yui/yuglify/issues"
+  },
+  "licenses": [
+    {
+      "type": "BSD",
+      "url": "https://github.com/yui/yuglify/blob/master/LICENSE"
     }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/yui/yuglify.git"
+  }
 }

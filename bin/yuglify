@@ -17,23 +17,25 @@ var nopt = require('nopt'),
         output: path,
         terminal: Boolean,
         help: Boolean,
-        version: Boolean
+        version: Boolean,
+        name: String,
+        compile: String
     },
     shorts = {
         'o': ['--output'],
         't': ['--type'],
         'h': ['--help'],
-        'v': ['--version']
+        'v': ['--version'],
+        'n': ['--name'],
+        'c': ['--compile']
     },
     parsed = nopt(known, shorts);
-
-parsed.type = parsed.type || 'js'; //Default to JS files
+    parsed.type = parsed.type || 'js'; //Default to JS files
 
 if (parsed.version) {
     console.log(pack.version);
     process.exit(0);
 }
-
 
 if (parsed.help || (!parsed.argv.remain.length && !parsed.terminal)) {
     var help = [
@@ -77,10 +79,12 @@ if (parsed.terminal) {
         });
     });
 } else {
-    console.log('compressing..');
+
+    console.log('Compressing...');
     console.log(parsed.argv.remain.join(', '));
 
-    var out = parsed.out,
+    var out = parsed.output,
+        compiled = '',
         files = parsed.argv.remain;
 
     //Uglify is blocking, so we will do this in sync..
@@ -89,7 +93,9 @@ if (parsed.terminal) {
         if (exists(file)) {
             var data = fs.readFileSync(file, 'utf8'),
                 ext = path.extname(file),
-                out = path.join(path.dirname(file), path.basename(file).replace(ext, '') + '-min' + ext),
+                basename = 
+                out = path.join(path.dirname(file), path.basename(file).replace(ext, '') + '.min' + ext),
+
                 compfn = (ext === '.css' ? cssmin : jsmin);
 
             compfn(data, function(err, smashed) {
@@ -97,12 +103,24 @@ if (parsed.terminal) {
                     throw(err);
                     process.exit(1);
                 }
-                fs.writeFileSync(out, smashed, 'utf8');
-                console.log('compressed file', out);
+                
+                if(parsed.compile) {
+                    compiled += smashed;
+                } else {
+                    fs.writeFileSync(out, smashed, 'utf8');
+                    console.log('Compressed file:', out);
+                }
+                
             });
         } else {
             console.log('Failed to find', file);
             process.exit(1);
         }
     });
+
+    if(parsed.compile) {
+        fs.writeFileSync(parsed.compile, compiled.replace(/(\n|\r)/gi, ''), 'utf8');
+        console.log('Single compiled and compressed file:', parsed.compile);
+        compiled = '';
+    }
 }
