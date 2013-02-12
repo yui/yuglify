@@ -12,6 +12,10 @@ var nopt = require('nopt'),
     pack = require('../package.json'),
     jsmin = require('../').jsmin,
     cssmin = require('../').cssmin,
+    sprintf = require('../lib/sprintf.js').sprintf,
+    defaults = {
+        name: "%(name)s.min%(ext)s"
+    },
     known = {
         type: ['css', 'js'],
         output: path,
@@ -29,12 +33,17 @@ var nopt = require('nopt'),
         'n': ['--name'],
         'c': ['--compile']
     },
+    filename = defaults.name,
     parsed = nopt(known, shorts);
     parsed.type = parsed.type || 'js'; //Default to JS files
 
 if (parsed.version) {
     console.log(pack.version);
     process.exit(0);
+}
+
+if(parsed.name) {
+    filename = parsed.name;
 }
 
 if (parsed.help || (!parsed.argv.remain.length && !parsed.terminal)) {
@@ -80,24 +89,26 @@ if (parsed.terminal) {
     });
 } else {
 
-    console.log('Compressing...');
-    console.log(parsed.argv.remain.join(', '));
-
-    var out = parsed.output,
-        compiled = '',
+    console.log('Compressing:', parsed.argv.remain.join(', '));
+    
+    var buffer = '',
         files = parsed.argv.remain;
 
     //Uglify is blocking, so we will do this in sync..
     files.forEach(function(file) {
+
         file = path.resolve(file);
+        
         if (exists(file)) {
+
             var data = fs.readFileSync(file, 'utf8'),
-                ext = path.extname(file),
-                basename = 
-                out = path.join(path.dirname(file), path.basename(file).replace(ext, '') + '.min' + ext),
+                destination = path.dirname(file) + '/',
+                extension = path.extname(file),
+                basename = path.basename(file).replace(extension, ''),
+                compressed = destination.concat(sprintf(filename, {name: basename, ext: extension})),
+                compfn = (extension === '.css' ? cssmin : jsmin);
 
-                compfn = (ext === '.css' ? cssmin : jsmin);
-
+                
             compfn(data, function(err, smashed) {
                 if (err) {
                     throw(err);
@@ -105,10 +116,10 @@ if (parsed.terminal) {
                 }
                 
                 if(parsed.compile) {
-                    compiled += smashed;
+                    buffer += smashed;
                 } else {
-                    fs.writeFileSync(out, smashed, 'utf8');
-                    console.log('Compressed file:', out);
+                    fs.writeFileSync(compressed, smashed, 'utf8');
+                    console.log('Compressed file:', compressed);
                 }
                 
             });
@@ -119,8 +130,13 @@ if (parsed.terminal) {
     });
 
     if(parsed.compile) {
-        fs.writeFileSync(parsed.compile, compiled.replace(/(\n|\r)/gi, ''), 'utf8');
-        console.log('Single compiled and compressed file:', parsed.compile);
-        compiled = '';
+        
+        var compiled = parsed.compile === "true" ? sprintf(filename, {name: "main", ext: ".js"}) : parsed.compile;
+
+        fs.writeFileSync(compiled, buffer.replace(/(\n|\r)/gi, ''), 'utf8');
+        console.log('Single compiled and compressed file:', compiled);
+        buffer = '';
+
     }
+
 }
