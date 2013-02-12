@@ -14,7 +14,7 @@ var nopt = require('nopt'),
     cssmin = require('../').cssmin,
     sprintf = require('../lib/sprintf.js').sprintf,
     defaults = {
-        name: "%(name)s.min%(ext)s"
+        name: '%(name)s.min%(ext)s'
     },
     known = {
         type: ['css', 'js'],
@@ -71,7 +71,7 @@ if (parsed.terminal) {
     var stdin = process.openStdin(),
         data = '';
 
-    stdin.setEncoding("utf8");
+    stdin.setEncoding('utf8');
     stdin.on('data', function(buffer) {
         data += buffer;
     });
@@ -133,7 +133,7 @@ if (parsed.terminal) {
 
     if(parsed.compile) {
         
-        var compiled = parsed.compile === "true" ? sprintf(filename, {name: "main", ext: ".js"}) : parsed.compile;
+        var compiled = parsed.compile === 'true' ? sprintf(filename, {name: 'main', ext: '.js'}) : parsed.compile;
 
         fs.writeFileSync(compiled, buffer.replace(/(\n|\r)/gi, ''), 'utf8');
         console.log('Single compiled and compressed file:', compiled);
