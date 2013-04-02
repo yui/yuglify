@@ -14,6 +14,7 @@ var nopt = require('nopt'),
     pack = require('../package.json'),
     jsmin = require('../').jsmin,
     cssmin = require('../').cssmin,
+    hasColor = process.stdin.isTTY,
     defaults = {
         name: '%s.min%s'
     },
@@ -147,8 +148,14 @@ if (parsed.terminal) {
 
                 fs.writeFileSync(combined, buffer[type].replace(/(\n|\r)/gi, ''), 'utf8');
 
-                // Those bizarre sets of characters are for coloring the output.
-                console.log('Generated combined ' + type.toUpperCase() + ' file: \u001b[32m' + combined + '\033[0m');
+                var log = 'Generated combined ' + type.toUpperCase() + ' file: ';
+                if (hasColor) {
+                    // Those bizarre sets of characters are for coloring the output.
+                    log += '\u001b[32m' + combined + '\033[0m';
+                } else {
+                    log += combined;
+                }
+                console.log(log);
 
             }
 
