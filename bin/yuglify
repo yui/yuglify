@@ -121,9 +121,14 @@ if (parsed.terminal) {
 
                     fs.writeFileSync(compressed, smashed, 'utf8');
 
-                    // Those bizarre sets of characters are for coloring the output.
-                    console.log('Successfully generated ' + extension.slice(1).toUpperCase() + ' file: \u001b[32m' + path.relative(pwd, compressed) + '\033[0m');
-
+                    var log = 'Successfully generated ' + extension.slice(1).toUpperCase() + ' file: ';
+                    if (hasColor) {
+                        // Those bizarre sets of characters are for coloring the output.
+                        log += '\u001b[32m' + path.relative(pwd, compressed) + '\033[0m';
+                    } else {
+                        log += path.relative(pwd, compressed);
+                    }
+                    console.log(log);
                 }
                 
             });
@@ -137,7 +142,7 @@ if (parsed.terminal) {
 
         var combined;
 
-        // Looping through kown types.
+        // Looping through known types.
         known.type.forEach(function( type ) {
 
             if(buffer[type] !== '') {
