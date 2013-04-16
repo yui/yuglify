@@ -21,7 +21,7 @@ CLI Usage
     yuglify ./lib/*.js #uses shell globbing, won't work on Windows
 
 This will read all passed files and compress them (js or css) and write them back beside the original
-with the name altered to `-min.js|css`.
+with the name altered to `.min.js|css`.
 
 Required
 --------
