@@ -1,0 +1,1 @@
+The mocha-tests directory contains tests that will validate refactoring steps.
