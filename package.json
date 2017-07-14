@@ -1,16 +1,17 @@
 {
   "name": "yuglify",
   "description": "cli wrapper for uglify and cssmin used by YUI",
-  "version": "0.1.4",
+  "version": "1.0.0",
   "dependencies": {
-    "uglify-js": "~1.3.4",
-    "ycssmin": "~1.0.1",
-    "nopt": "~2.1.1"
+    "mocha": "^3.4.2",
+    "nopt": "~2.1.1",
+    "uglify-js": "^2.8.29",
+    "ycssmin": "~1.0.1"
   },
   "devDependencies": {
-    "yui-lint": "~0.1.1",
-    "jshint": "~0.9.0",
-    "vows": "*"
+    "jshint": "^2.9.5",
+    "vows": "*",
+    "yui-lint": "^0.2.0"
   },
   "main": "./lib/index.js",
   "bin": {
@@ -18,7 +19,7 @@
   },
   "scripts": {
     "pretest": "jshint --config ./node_modules/yui-lint/jshint.json ./lib/*.js ./bin/yuglify",
-    "test": "vows --spec ./tests/*.js"
+    "test": "vows --spec ./tests/*.js && mocha mocha-tests --recursive"
   },
   "preferGlobal": "true",
   "bugs": {

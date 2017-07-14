@@ -1,0 +1,7 @@
+/*! This is a License Comment
+	* It should persist through the uglification
+*/
+
+var a = function () {
+	return true;
+};
