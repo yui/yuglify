@@ -1,15 +1,15 @@
 {
   "name": "yuglify",
   "description": "cli wrapper for uglify and cssmin used by YUI",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "dependencies": {
-    "mocha": "^3.4.2",
     "nopt": "~2.1.1",
     "uglify-js": "^2.8.29",
     "ycssmin": "~1.0.1"
   },
   "devDependencies": {
     "jshint": "^2.9.5",
+    "mocha": "^3.4.2",
     "vows": "*",
     "yui-lint": "^0.2.0"
   },
