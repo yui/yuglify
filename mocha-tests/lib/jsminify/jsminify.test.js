@@ -11,21 +11,9 @@ var bad = String(fs.readFileSync(path.join(__dirname, 'badSyntax.js.ignore')));
 
 describe('JSminify Unit Tests', function () {
 	it('should have a default config object', function () {
-		var expected = {
-			mangle: true,
-			squeeze: true,
-			semicolon: false,
-			lift_vars: true,
-			mangle_toplevel: true,
-			no_mangle_functions: true,
-			max_line_length: 6000
-		};
-
 		assert.strictEqual(typeof config, 'object');
-
-		Object.keys(expected).forEach(function (key) {
-			assert.strictEqual(config[key], expected[key]);
-		});
+		assert.strictEqual(typeof config.output, 'object');
+		assert.strictEqual(typeof config.compress, 'object');
 	});
 	it('should have a jsminify function', function () {
 		assert.strictEqual(typeof jsminify, 'function');
@@ -35,7 +23,7 @@ describe('JSminify Unit Tests', function () {
 			if (err) {
 				return done(err);
 			}
-			assert.strictEqual(code, 'var a=function(){return!0};\n');
+			assert.strictEqual(code, 'var a=function(){return!0}\n');
 			done();
 		});
 	});
@@ -45,7 +33,7 @@ describe('JSminify Unit Tests', function () {
 				return done(err);
 			}
 
-			assert.strictEqual(code, '/*! This is a License Comment\n\t* It should persist through the uglification\n*/\n;var a=function(){return!0};\n');
+			assert.strictEqual(code, '/*! This is a License Comment\n\t* It should persist through the uglification\n*/\nvar a=function(){return!0}\n');
 			done();
 		});
 	});
